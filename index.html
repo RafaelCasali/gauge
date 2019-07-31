@@ -1,0 +1,150 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="System" >
+<head>
+
+    <meta name="robots" content="all" /> 
+    <meta name="language" content="pt-br" /> 
+    <meta name="classification" content="Sistema de usuários influentes" /> 
+    <meta name="rating" content="general" /> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">    
+	
+		<!-- Angular -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.8/angular-filter.js"></script>
+
+		<!-- Angular (modudelo, controller e directive) -->
+		<script src="js/system.module.js"></script>
+		<script src="js/system.controller.js"></script>
+
+		<title>Gauge - Usuários Influentes</title>
+
+		<!-- Bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		
+		<!-- Personalização -->
+		<link rel="stylesheet" type="text/css" href="sass/style.min.css"/>
+		<!-- Font Googlefonts -->
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,400i,700&display=swap" rel="stylesheet"> 
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Sistem Gauge</title>
+</head>
+
+<body ng-controller="SysController">
+
+<div class="header d-flex justify-content-start">
+    <div class="hamburguer-menu mr-3" ng-click="menu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <span>Sistema - Usuários Influentes</span>
+</div>
+
+<div class="menu" ng-if="menuActive">
+    <ul>
+        <li>MENU</li>
+        <li>Home</li>
+        <li>Interações</li>
+        <li>Usuários</li>
+        <li>Configurações</li>
+    </ul>
+</div>
+
+<div class="overlay" ng-click="menu()"  ng-if="menuActive"></div>
+
+<div class="container box-page">
+    <h1>{{ title }}</h1>    
+    <p>{{ description }}</p>
+
+    <div class="row mb-4 d-flex justify-content-center brands mobile-off">
+        <div class="col-md-2 brand d-flex align-items-center" ng-click="selectedBrand(brand.id)" ng-repeat="brand in brands" ng-class="{selected: idSelectedBrand == brand.id}">
+            <img src="{{brand.image}}" />
+        </div>
+    </div>
+
+    <div class="brands mobile-on">
+        <div class="form-group">        
+            <label>Selecione uma Marca:</label>
+            <select class="form-control" ng-change="selectedBrand(brand)" ng-model="brand">
+                <option ng-repeat="brand in brands" value="{{brand.id}}" ng-selected="idSelectedBrand == brand.id">
+                    {{brand.name}}
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row dashboard">
+        <div class="col-md-6">
+            <h2>Dados de Interações</h2>
+            <div class="row">
+                <div class="col-md-12">
+                    <p><strong>Total de interações:</strong> {{favorites.length+comments.length+shares.length || 0}}</p>
+                </div>
+                <div class="row col-md-12 d-flex justify-content-center">
+                    <div class="col-md-4 col-3">
+                        <div class="info">
+                            <p><span>{{favorites.length || 0}}</span><br/>Favorites</p>                        
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-3">
+                        <div class="info">
+                            <p><span>{{comments.length || 0}}</span><br/>Comemts</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-3">
+                        <div class="info">
+                            <p><span>{{shares.length || 0}}</span><br/>Shares</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2>Dados Demograficos</h2>
+            <div class="row demographic">
+                <div class="col-md-12">
+                    <p><strong>Total Homem/Mulher:</strong> {{userInteractionMale+userInteractionFemale || 0}}</p>
+                </div>
+                <div class="col-md-12">
+                    <div class="male d-flex align-items-center">
+                        <div class="icon"></div>
+                        <div class="bar d-flex align-items-center" style="width: {{userInteractionMale/(userInteractionMale+userInteractionFemale)*100}}%; min-width: 40px;">
+                            <strong>{{userInteractionMale || 0}}</strong>
+                        </div>
+                    </div>
+                    <div class="female d-flex align-items-center">
+                        <div class="icon"></div>
+                        <div class="bar d-flex align-items-center"  style="width: {{userInteractionFemale/(userInteractionMale+userInteractionFemale)*100}}%; min-width: 40px;">
+                            <strong>{{userInteractionFemale || 0}}</strong>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 mt-4" ng-if="userfinal">
+            <h2>Interações</h2>
+            
+            <div class="row list-interactions">
+                <!-- <div class="col-12 col-md-6 col-lg-4"> -->
+                <div class="col-12 col-md-6 col-lg-4" ng-repeat="user in userfinal">
+                    <div class=" item-interaction">
+                        <div class="details d-flex justify-content-start">
+                            <img src="{{user.picture.medium}}" class="picture" />
+                            <div class="details-person">
+                                <p><strong>Nome:</strong> {{user.name.first}} {{user.name.last}}</p>
+                                <p><strong>Sexo:</strong> {{user.gender}}</p>
+                                <p><strong>Local:</strong> {{user.location.city}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>                                                                                                  
+            </div>
+        </div>
+    </div>
+
+</div>    
+</body>
+</html>
